@@ -10,7 +10,7 @@ namespace GracenoteSportsApi.WebApi.GracenoteSports
     /// <summary>
     /// 
     /// </summary>
-    [RoutePrefix("api")]
+    [RoutePrefix("api/football-league")]
     public class GracenoteSportsController : ApiController
     {
         private readonly LeagueService _leagueService;
@@ -26,11 +26,12 @@ namespace GracenoteSportsApi.WebApi.GracenoteSports
             _leagueService = leagueService;
             _gameEventService = gameEventService;
         }
+        
         ///  <summary>
         ///  This API gives all Leagues
         ///  </summary>
         [HttpGet]
-        [Route("GetLeagues")]
+        [Route("")]
         [ResponseType(typeof(IEnumerable<League>))]
         public IHttpActionResult GetLeagues()
         {
@@ -44,11 +45,12 @@ namespace GracenoteSportsApi.WebApi.GracenoteSports
                 return InternalServerError(e);
             }
         }
+
         ///  <summary>
         ///  This API create a League
         ///  </summary>
         [HttpPost]
-        [Route("CreateLeague")]
+        [Route("")]
         public IHttpActionResult CreateLeague([FromBody]League league)
         {
             try
@@ -61,11 +63,12 @@ namespace GracenoteSportsApi.WebApi.GracenoteSports
                 return InternalServerError(e);
             }
         }
+
         ///  <summary>
         ///  This API gives all Game Events
         ///  </summary>
         [HttpGet]
-        [Route("GetGameEvents")]
+        [Route("events")]
         [ResponseType(typeof(IEnumerable<GameEvent>))]
         public IHttpActionResult GetGameEvents()
         {
@@ -79,11 +82,12 @@ namespace GracenoteSportsApi.WebApi.GracenoteSports
                 return InternalServerError(e);
             }
         }
+
         ///  <summary>
         ///  This API creates a Game Event
         ///  </summary>
         [HttpPost]
-        [Route("CreateGameEvent")]
+        [Route("event")]
         public IHttpActionResult CreateGameEvent([FromBody]GameEvent gameEvent)
         {
             try
