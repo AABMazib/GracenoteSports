@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,9 +10,11 @@ namespace GracenoteSports.Api
     [Route("api/league")]
     public class LeagueController : Controller
     {
-        public LeagueController()
-        {
+        private readonly IMatchActionDataRepository _matchActionDataRepository;
 
+        public LeagueController(IMatchActionDataRepository matchActionDataRepository)
+        {
+            _matchActionDataRepository = matchActionDataRepository;
         }
 
         /// <summary>
@@ -40,11 +41,11 @@ namespace GracenoteSports.Api
                 throw new ArgumentException("id is missing.");
             }
 
-            var matchActions = new MatchActionData[0]; // todo read from file;
+            var matchActions = await _matchActionDataRepository.GetMatchActionDataAsync();
 
             var rankings = matchActions
                 .Where(ma => id == ma.Competition)
-                .GroupBy(ma => ma.MatchID)
+                .GroupBy(ma => ma.MatchId)
                 .Select(group => group.First())
                 .SelectMany(ma =>
                 {
@@ -130,14 +131,14 @@ namespace GracenoteSports.Api
                 throw new ArgumentException("matchId is missing.");
             }
 
-            var matchActions = new MatchActionData[0]; // todo read from file;
+            var matchActions = await _matchActionDataRepository.GetMatchActionDataAsync();
 
             var teams = matchActions
                 .Where(
-                ma => "Line-up" == ma.Action && "Start" == ma.Period && ma.TeamID > 0
-                    && "Coach" != ma.Function && id == ma.Competition && matchId == ma.MatchID
+                ma => "Line-up" == ma.Action && "Start" == ma.Period && ma.TeamId > 0
+                    && "Coach" != ma.Function && id == ma.Competition && matchId == ma.MatchId
                 )
-                .GroupBy(ma => ma.TeamID)
+                .GroupBy(ma => ma.TeamId)
                 .Select(grouped =>
                 {
                     var data = grouped.ToList();
@@ -176,44 +177,5 @@ namespace GracenoteSports.Api
                 }
             });
         }
-    }
-
-    public class LeagueTable
-    {
-        public string LeagueId { get; set; }
-        public IEnumerable<Ranking> Rankings { get; set; }
-    }
-
-    public class Ranking
-    {
-        public int Rank { get; set; }
-        public string TeamId { get; set; }
-        public int MatchPlayed { get; set; }
-        public int MatchWon { get; set; }
-        public int MatchLost { get; set; }
-        public int MatchDrawn { get; set; }
-        public int Points { get; set; }
-    }
-
-    public class MatchActionData
-    {
-        public int ActionId { get; set; }
-        public string Competition { get; set; }
-        public int MatchID { get; set; }
-        public string HomeTeam { get; set; }
-        public string AwayTeam { get; set; }
-        public int HomeGoals { get; set; }
-        public int AwayGoals { get; set; }
-        public DateTime Date { get; set; }
-        public string Action { get; set; }
-        public string Period { get; set; }
-        public int StartTime { get; set; }
-        public int Endtime { get; set; }
-        public int HomeOrAway { get; set; }
-        public int TeamID { get; set; }
-        public string Team { get; set; }
-        public string PersonId { get; set; }
-        public string Person { get; set; }
-        public string Function { get; set; }
     }
 }
